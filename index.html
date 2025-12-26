@@ -99,23 +99,32 @@
 
         .info-board { width: 85%; max-width: 600px; background: #fef5e7; border: 6px double #e67e22; border-radius: 30px; padding: 30px; text-align: left; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         
-        /* 大廳佈局與卡片 */
+        /* 🌟 大廳佈局修正 (確保全螢幕完整顯示) */
         #level-map { 
-            display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            padding: 20px; gap: 40px; 
+            display: flex; flex-direction: column; 
+            /* 讓內容在剩餘空間中均勻分佈，而不是擠在中間或跑出去 */
+            justify-content: space-evenly; 
+            align-items: center; 
+            height: calc(100vh - 50px); /* 扣掉 header 高度 */
+            padding: 10px; 
+            overflow-y: auto; /* 保險起見，如果螢幕真的太小可滾動 */
         }
         
         .menu-section-title { 
-            font-size: 24px; font-weight: bold; color: #d35400; margin-bottom: 15px; 
+            font-size: 22px; font-weight: bold; color: #d35400; 
             display: flex; align-items: center; gap: 10px;
+            margin: 0; /* 移除多餘邊距 */
         }
         .menu-section-title::before, .menu-section-title::after {
-            content: ""; display: block; width: 50px; height: 3px; background: #d35400; opacity: 0.5; border-radius: 2px;
+            content: ""; display: block; width: 40px; height: 3px; background: #d35400; opacity: 0.5; border-radius: 2px;
         }
 
-        .level-container { display: flex; gap: 30px; justify-content: center; flex-wrap: wrap; }
+        .level-container { display: flex; gap: 30px; justify-content: center; flex-wrap: wrap; margin-bottom: 10px; }
+        
+        /* 卡片尺寸微調，適應筆電螢幕 */
         .level-card { 
-            width: 220px; height: 280px; background: white; 
+            width: 220px; height: 250px; /* 高度縮小 */
+            background: white; 
             border: 4px solid #e67e22; border-radius: 20px; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
             cursor: pointer; transition: 0.3s; box-shadow: 0 8px 20px rgba(0,0,0,0.15); 
@@ -158,7 +167,7 @@
 
         /* 福利社卡片 */
         .welfare-card { 
-            width: 470px; height: 140px; 
+            width: 470px; height: 120px; /* 高度縮小 */
             background: linear-gradient(to right, #ffffff, #eaf2f8); 
             border: 4px solid #3498db; border-radius: 20px; 
             display: flex; align-items: center; justify-content: space-around; 
@@ -227,13 +236,11 @@
             </div>
         </div>
 
-        <br><br>
-
         <div class="menu-section-title" style="color:#2980b9;">🎁 員工休閒區</div>
         <div class="welfare-card" onclick="startGuessBoxGame()">
             <div style="font-size:70px;">🎁</div>
             <div style="text-align: left;">
-                <h3 style="margin:10px 0; color:#3498db; font-size:24px;">營業福利社</h3>
+                <h3 style="margin:5px 0; color:#3498db; font-size:24px;">營業福利社</h3>
                 <p style="margin:0; color:#555; font-size:16px;">賺錢辛苦了！來抽個盲盒試試手氣吧！</p>
             </div>
             <div style="font-size:30px; color:#e74c3c;">➔</div>
@@ -376,7 +383,7 @@
     let totalAssets = 0;  
     const HEART_COST = 400; 
     const CHEST_COST = 500; 
-    const SHOP_UNLOCK_COST = 300; // 🌟 降低解鎖費用為 300
+    const SHOP_UNLOCK_COST = 300; 
     const FAIL_PENALTY = 300; 
     let unlockTimer = null;
     let lastRoundCorrect = false; 
@@ -385,10 +392,11 @@
     let isGameLocked = false; 
     let isShop2Unlocked = false; 
 
-    // 🌟 初始化：街機模式，每次重整都歸零
+    // 🌟 初始化 (移除 LocalStorage，每次歸零)
     window.onload = function() {
         totalAssets = 0; 
         isShop2Unlocked = false; 
+        
         updateTotalAssetsDisplay();
         updateShopUI(); 
         updateShopLockState(); 
@@ -438,6 +446,7 @@
         }
     }
 
+    // 更新商店鎖定狀態
     function updateShopLockState() {
         if(isShop2Unlocked) return; 
 
@@ -466,6 +475,7 @@
         showMessage("🔒 解鎖新店面", `確定花費 <b>$${SHOP_UNLOCK_COST}</b><br>解鎖「深夜食堂」嗎？`, true, () => {
             totalAssets -= SHOP_UNLOCK_COST;
             isShop2Unlocked = true;
+            // 🌟 不存檔
             updateTotalAssetsDisplay();
             updateShopUI();
             setTimeout(() => showMessage("🎉 解鎖成功", "您已擴展版圖！<br>現在可以經營「深夜食堂」了！"), 500);
@@ -478,7 +488,6 @@
             const lock = document.getElementById('shop-2-lock');
             const open = document.getElementById('shop-2-open');
             card.classList.remove('locked');
-            // 解鎖後恢復正常卡片樣式
             card.style.background = "white";
             card.style.border = "4px solid #e67e22";
             card.querySelector('h3').style.color = "black";
@@ -715,7 +724,7 @@
             winBtns.classList.add('hidden');
         }
         
-        // 🌟 更新資產但不存檔 (街機模式)
+        // 🌟 更新但不存檔
         updateTotalAssetsDisplay();
         document.getElementById('end-score').innerText = `$${score}`;
     }
@@ -811,7 +820,7 @@
             }
         });
 
-        // 🌟 更新資產但不存檔
+        // 🌟 更新但不存檔
         updateTotalAssetsDisplay();
         setTimeout(() => { document.getElementById('replay-btn').classList.remove('hidden'); }, 1500);
     }
