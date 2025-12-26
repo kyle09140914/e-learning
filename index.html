@@ -14,7 +14,28 @@
         .header { flex: 0 0 50px; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; background: #e67e22; color: white; font-size: 20px; font-weight: bold; z-index: 100; }
         .stage { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0; box-sizing: border-box; overflow: hidden; position: relative; }
 
-        /* 3. 擬真場景佈局 */
+        /* 3. 初始標題畫面 */
+        #start-screen {
+            background: linear-gradient(135deg, #f1c40f 0%, #e67e22 100%);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; color: white;
+        }
+        .game-title {
+            font-size: 60px; font-weight: 900; 
+            text-shadow: 4px 4px 0px #d35400;
+            margin-bottom: 20px; letter-spacing: 2px;
+            animation: bounceIn 1s;
+        }
+        .start-btn {
+            padding: 15px 50px; font-size: 30px; background: white; color: #d35400;
+            border: 5px solid #d35400; border-radius: 50px; font-weight: bold;
+            cursor: pointer; transition: 0.3s; box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            animation: pulse 2s infinite;
+        }
+        .start-btn:hover { transform: scale(1.1); background: #fff3e0; }
+        @keyframes bounceIn { 0% { transform: scale(0.1); opacity: 0; } 60% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(1); } }
+
+        /* 4. 擬真場景佈局 */
         #game-zone {
             background: url('https://img.freepik.com/free-photo/blurred-coffee-shop_1203-227.jpg') center/cover;
             position: relative;
@@ -35,7 +56,7 @@
             transition: 0.3s; z-index: 5;
         }
 
-        /* 4. 介面元件 */
+        /* 5. 介面元件 */
         .stat-bar { 
             position: absolute; top: 10px; left: 2%; width: 96%; height: 60px; 
             background: rgba(255, 255, 255, 0.95); border: 3px solid #e67e22; border-radius: 50px; 
@@ -70,7 +91,7 @@
             padding: 15px; border-radius: 15px; font-size: 18px; line-height: 1.4; display: none; z-index: 15;
         }
 
-        /* 5. 動畫與互動視窗 */
+        /* 6. 動畫與互動視窗 */
         .flying-coin {
             position: absolute; bottom: -100px; left: 50%; width: 80px; height: 80px;
             background: url('https://cdn-icons-png.flaticon.com/512/2460/2460475.png') center/contain no-repeat;
@@ -93,27 +114,25 @@
         .buy-btn:active { transform: translateY(4px); box-shadow: 0 0 #c0392b; }
         .buy-btn:disabled { background: #bdc3c7; color: #7f8c8d; box-shadow: none; cursor: not-allowed; opacity: 0.8; transform: none; }
         
-        .feedback-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 100; }
+        .feedback-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 300; }
         .feedback-box { width: 500px; background: white; border: 6px solid #e67e22; border-radius: 30px; padding: 30px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
         .info-board { width: 85%; max-width: 600px; background: #fef5e7; border: 6px double #e67e22; border-radius: 30px; padding: 30px; text-align: left; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         
-        /* 🌟 大廳佈局修正 (確保全螢幕完整顯示) */
+        /* 大廳佈局 (RWD) */
         #level-map { 
             display: flex; flex-direction: column; 
-            /* 讓內容在剩餘空間中均勻分佈，而不是擠在中間或跑出去 */
             justify-content: space-evenly; 
             align-items: center; 
-            height: calc(100vh - 50px); /* 扣掉 header 高度 */
+            height: calc(100vh - 50px);
             padding: 10px; 
-            overflow-y: auto; /* 保險起見，如果螢幕真的太小可滾動 */
+            overflow-y: auto;
         }
         
         .menu-section-title { 
             font-size: 22px; font-weight: bold; color: #d35400; 
-            display: flex; align-items: center; gap: 10px;
-            margin: 0; /* 移除多餘邊距 */
+            display: flex; align-items: center; gap: 10px; margin: 0; 
         }
         .menu-section-title::before, .menu-section-title::after {
             content: ""; display: block; width: 40px; height: 3px; background: #d35400; opacity: 0.5; border-radius: 2px;
@@ -121,10 +140,8 @@
 
         .level-container { display: flex; gap: 30px; justify-content: center; flex-wrap: wrap; margin-bottom: 10px; }
         
-        /* 卡片尺寸微調，適應筆電螢幕 */
         .level-card { 
-            width: 220px; height: 250px; /* 高度縮小 */
-            background: white; 
+            width: 220px; height: 250px; background: white; 
             border: 4px solid #e67e22; border-radius: 20px; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
             cursor: pointer; transition: 0.3s; box-shadow: 0 8px 20px rgba(0,0,0,0.15); 
@@ -132,25 +149,20 @@
         }
         .level-card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.2); }
         
-        /* 鎖定商店樣式 (深夜星空主題) */
+        /* 鎖定商店 (星空主題) */
         .level-card.locked { 
             border: 4px solid #2c3e50; 
             background: linear-gradient(135deg, #1a252f 0%, #2c3e50 100%); 
-            cursor: default; 
-            box-shadow: inset 0 0 30px #000;
+            cursor: default; box-shadow: inset 0 0 30px #000;
         }
         .level-card.locked:hover { transform: none; box-shadow: inset 0 0 30px #000; }
         
-        /* 鎖定遮罩 */
         .lock-overlay { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
             display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            color: #f1c40f; 
-            text-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
-            z-index: 5;
+            color: #f1c40f; text-shadow: 0 0 10px rgba(241, 196, 15, 0.5); z-index: 5;
         }
         
-        /* 解鎖按鈕與提示 */
         .unlock-btn { 
             padding: 8px 16px; background: #f39c12; color: white; border: 2px solid #e67e22; 
             border-radius: 20px; font-weight: bold; cursor: pointer; margin-top: 15px; 
@@ -167,7 +179,7 @@
 
         /* 福利社卡片 */
         .welfare-card { 
-            width: 470px; height: 120px; /* 高度縮小 */
+            width: 470px; height: 120px; 
             background: linear-gradient(to right, #ffffff, #eaf2f8); 
             border: 4px solid #3498db; border-radius: 20px; 
             display: flex; align-items: center; justify-content: space-around; 
@@ -197,14 +209,31 @@
 <body>
 
 <div class="container">
+    <div id="start-screen" class="stage" style="z-index: 200;">
+        <div class="game-title">🍳 經營宇宙：我的全能早餐店</div>
+        <div style="font-size: 24px; margin-bottom: 40px; opacity: 0.9;">數學與商業的結合</div>
+        <button class="start-btn" onclick="enterGame()">🚀 開始經營</button>
+    </div>
+
     <div class="header">
-        <div>🍳 我的全能早餐店</div>
+        <div>🍳 經營宇宙</div>
         <div id="total-assets-display" style="background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px;">
             🏦 銀行總資產: $0
         </div>
     </div>
 
-    <div id="level-map" class="stage" style="background: #f1c40f;">
+    <div id="login-modal" class="feedback-overlay hidden" style="z-index: 300;">
+        <div class="feedback-box" style="border-color: #e67e22; width: 450px;">
+            <h2 style="color: #d35400; font-size: 28px; margin-bottom: 20px;">請輸入店長編號 (學號)</h2>
+            <input type="text" id="student-id-input" placeholder="例如: s123456" 
+                   style="font-size: 20px; padding: 10px; width: 80%; border: 2px solid #bdc3c7; border-radius: 10px; text-align: center; margin-bottom: 20px;">
+            <div>
+                <button class="btn" style="background: #e67e22; padding: 10px 40px;" onclick="submitLogin()">確定</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="level-map" class="stage hidden" style="background: #f1c40f;">
         
         <div class="menu-section-title">🏙️ 商店街經營</div>
         <div class="level-container">
@@ -236,11 +265,11 @@
             </div>
         </div>
 
-        <div class="menu-section-title" style="color:#2980b9;">🎁 員工休閒區</div>
+        <div class="menu-section-title" style="color:#2980b9;">🎁 員工福利社</div>
         <div class="welfare-card" onclick="startGuessBoxGame()">
             <div style="font-size:70px;">🎁</div>
             <div style="text-align: left;">
-                <h3 style="margin:5px 0; color:#3498db; font-size:24px;">營業福利社</h3>
+                <h3 style="margin:5px 0; color:#3498db; font-size:24px;">樂透抽抽抽💰</h3>
                 <p style="margin:0; color:#555; font-size:16px;">賺錢辛苦了！來抽個盲盒試試手氣吧！</p>
             </div>
             <div style="font-size:30px; color:#e74c3c;">➔</div>
@@ -264,9 +293,7 @@
 
     <div id="intro-phase" class="stage hidden" style="background: url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=1000') center/cover;">
         <div style="background:rgba(255,255,255,0.95); border:4px solid #e67e22; border-radius:20px; padding:25px; width:80%; cursor:pointer;" onclick="nextDialogue()">
-            <div style="font-weight:bold; color:#e67e22; font-size:22px;" id="speaker-name">經營顧問
-                
-            </div>
+            <div style="font-weight:bold; color:#e67e22; font-size:22px;" id="speaker-name">經營顧問</div>
             <div id="dialogue-content" style="font-size: 20px; margin-top:10px;">...</div>
             <div style="text-align: right; font-size: 14px; color: #aaa;">點擊繼續 ▼</div>
         </div>
@@ -284,11 +311,11 @@
     <div id="game-zone" class="stage hidden">
         <div class="stat-bar">
             <div id="customer-count" style="font-size:20px; font-weight:bold; color:#2c3e50;">👤 第 1 / 10 位顧客</div>
+            <div id="correct-display" style="font-size:18px; font-weight:bold; color:#27ae60;">✅ 答對: 0 題</div>
             <div id="score-display" style="font-size:20px; font-weight:bold; color:#d35400;">💰 本次營收: $0</div>
             <button id="buy-heart-btn" onclick="buyHeart()" class="buy-btn" disabled>🔒 答對5題後解鎖</button>
             <div id="hp-display" style="font-size:20px; font-weight:bold; color:#d35400;">❤️ 滿意度: ❤️❤️❤️</div>
         </div>
-
         <img id="char-img" class="char-img" src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png" alt="Customer">
 
         <div class="bubble">
@@ -360,6 +387,97 @@
 </div>
 
 <script>
+    let studentName = ""; 
+
+    const FORM_ID = "1FAIpQLSeS9bZw8ws3S-ziLfAA56wX6UjQ4MgZGHOJrPAmdmGEiJ9HYw"; 
+    const ID_NAME = "entry.327783741";   
+    const ID_STATUS = "entry.128889017"; 
+    const ID_ASSETS = "entry.1448499411"; 
+    const ID_SCORE = "entry.669904798";
+
+    function sendDataToBackend(status) {
+        if (!studentName || studentName.trim() === "") return; 
+
+        const url = `https://docs.google.com/forms/d/e/${FORM_ID}/formResponse`;
+        const params = new URLSearchParams();
+        params.append(ID_NAME, studentName);
+        params.append(ID_STATUS, status);
+        params.append(ID_ASSETS, totalAssets);
+        params.append(ID_SCORE, correctCount);
+
+        fetch(url, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: params.toString()
+        }).then(() => console.log("✅ 數據已成功同步：" + status))
+          .catch(e => console.error("❌ 同步失敗：", e));
+    }
+
+    let score = 0, hp = 3, currentQ = 0, shuffledQuiz = [];
+    let correctCount = 0; 
+    let totalAssets = 0;  
+    const HEART_COST = 400; 
+    const CHEST_COST = 500; 
+    const SHOP_UNLOCK_COST = 300; 
+    const FAIL_PENALTY = 300; 
+    let unlockTimer = null;
+    let lastRoundCorrect = false; 
+    let selectedChestIndex = -1;
+    let isGameLocked = false; 
+    let isShop2Unlocked = false; 
+
+    // 🌟 初始化：清除紀錄、顯示標題畫面
+    window.onload = function() {
+        // 1. 強制清除舊紀錄 (不留檔)
+        localStorage.clear();
+        
+        totalAssets = 0;
+        isShop2Unlocked = false;
+        
+        updateTotalAssetsDisplay();
+        updateShopUI();
+        updateShopLockState();
+        
+        // 2. 顯示標題，隱藏其他
+        document.getElementById('start-screen').classList.remove('hidden');
+        document.getElementById('level-map').classList.add('hidden');
+        document.getElementById('login-modal').classList.add('hidden');
+    };
+
+    // 🌟 點擊開始經營 -> 顯示輸入框
+    function enterGame() {
+        document.getElementById('login-modal').classList.remove('hidden');
+    }
+
+    // 🌟 提交學號 -> 進入大廳
+    function submitLogin() {
+        const input = document.getElementById('student-id-input');
+        const val = input.value.trim();
+        
+        if (!val) {
+            // 使用遊戲內的視窗顯示錯誤，不使用 alert
+            showMessage("⚠️ 提示", "請務必輸入學號才能開始經營喔！");
+            return;
+        }
+        
+        studentName = val;
+        
+        sendDataToBackend("進入遊戲大廳：成功登入");
+        
+        // 切換畫面
+        document.getElementById('login-modal').classList.add('hidden');
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('level-map').classList.remove('hidden');
+    }
+
+    function updateTotalAssetsDisplay() {
+        const text = `🏦 銀行總資產: $${totalAssets}`;
+        document.getElementById('total-assets-display').innerText = text;
+        document.getElementById('game-asset-display').innerText = text;
+        // 這裡不寫入 localStorage，確保重新整理後消失
+    }
+
     const charImages = [
         "https://cdn-icons-png.flaticon.com/512/4140/4140048.png", 
         "https://cdn-icons-png.flaticon.com/512/4140/4140047.png", 
@@ -380,33 +498,12 @@
         { q: "大數小數差8，大數是小數的2倍少2，求大數？", options: ["14", "16", "18", "20"], a: "18", hint: "設小數x，大數x+8。x+8 = 2x - 2，解出x再加8。" }
     ];
 
-    let score = 0, hp = 3, currentQ = 0, shuffledQuiz = [];
-    let correctCount = 0; 
-    let totalAssets = 0;  
-    const HEART_COST = 400; 
-    const CHEST_COST = 500; 
-    const SHOP_UNLOCK_COST = 300; 
-    const FAIL_PENALTY = 300; 
-    let unlockTimer = null;
-    let lastRoundCorrect = false; 
-    
-    let selectedChestIndex = -1;
-    let isGameLocked = false; 
-    let isShop2Unlocked = false; 
-
-    // 🌟 初始化 (移除 LocalStorage，每次歸零)
-    window.onload = function() {
-        totalAssets = 0; 
-        isShop2Unlocked = false; 
-        
-        updateTotalAssetsDisplay();
-        updateShopUI(); 
-        updateShopLockState(); 
-    };
-
     function showStage(stageId) {
-        document.querySelectorAll('.stage').forEach(s => s.classList.add('hidden'));
+        document.querySelectorAll('.stage').forEach(s => {
+            if(s.id !== 'start-screen' && s.id !== 'login-modal') s.classList.add('hidden');
+        });
         document.getElementById(stageId).classList.remove('hidden');
+        
         if(stageId === 'mini-game-menu' || stageId === 'guess-box-game') {
             updateTotalAssetsDisplay();
         }
@@ -448,7 +545,6 @@
         }
     }
 
-    // 更新商店鎖定狀態
     function updateShopLockState() {
         if(isShop2Unlocked) return; 
 
@@ -681,7 +777,14 @@
 
     function updateStats() {
         document.getElementById('score-display').innerText = `💰 本次營收: $${score}`;
-        let hearts = ""; for(let i=0; i<3; i++) hearts += (i < hp) ? "❤️" : "🖤";
+        
+        const correctDisplay = document.getElementById('correct-display');
+        if (correctDisplay) {
+            correctDisplay.innerText = `✅ 答對: ${correctCount} 題`;
+        }
+
+        let hearts = ""; 
+        for(let i=0; i<3; i++) hearts += (i < hp) ? "❤️" : "🖤";
         document.getElementById('hp-display').innerText = `滿意度: ${hearts}`;
 
         const btn = document.getElementById('buy-heart-btn');
@@ -699,7 +802,7 @@
             btn.style.background = "#e74c3c";
         }
     }
-
+    
     function endGame(isWin) {
         showStage('fail-menu');
         const title = document.getElementById('end-title');
@@ -711,32 +814,25 @@
             title.style.color = "#27ae60";
             assetMsg.innerText = "(已存入您的銀行總資產)";
             winBtns.classList.remove('hidden'); 
-            
-            totalAssets += score;
+            totalAssets += score; 
         } else {
             title.innerText = "💔 暫停營業";
             title.style.color = "#c0392b";
-            if(totalAssets > 0) {
-                totalAssets -= FAIL_PENALTY;
-                if(totalAssets < 0) totalAssets = 0;
-                assetMsg.innerHTML = `(挑戰失敗，資產倒扣 <b style='color:#e74c3c;'>-$${FAIL_PENALTY}</b> 😱)`;
-            } else {
-                assetMsg.innerText = "(挑戰失敗，資產歸零 💸)";
-            }
+            totalAssets -= FAIL_PENALTY;
+            if(totalAssets < 0) totalAssets = 0;
+            assetMsg.innerHTML = `(挑戰失敗，資產倒扣 <b style='color:#e74c3c;'>-$${FAIL_PENALTY}</b> 😱)`;
             winBtns.classList.add('hidden');
         }
         
-        // 🌟 更新但不存檔
         updateTotalAssetsDisplay();
         document.getElementById('end-score').innerText = `$${score}`;
-    }
 
-    function updateTotalAssetsDisplay() {
-        const text = `🏦 銀行總資產: $${totalAssets}`;
-        document.getElementById('total-assets-display').innerText = text;
-        document.getElementById('game-asset-display').innerText = text;
-        updateShopLockState();
-    }
+        if (isWin) {
+            sendDataToBackend(`通關成功！共答對 ${correctCount} 題，結算資產 $${totalAssets}`);
+        } else {
+            sendDataToBackend(`經營失敗(破產)。答對 ${correctCount} 題，剩餘 $${totalAssets}`);
+        }
+    }    
 
     function startGuessBoxGame() {
         showStage('guess-box-game');
@@ -779,51 +875,48 @@
 
         chests.forEach((chest, idx) => {
             const resultText = chest.querySelector('.chest-result');
-            
-            if (idx !== selectedChestIndex) {
-                chest.classList.add('disabled');
-            }
+            if (idx !== selectedChestIndex) chest.classList.add('disabled');
 
             if (idx === winnerIndex) {
                 chest.classList.add('revealed');
                 if (idx === selectedChestIndex) {
                     chest.classList.add('open-money');
                     resultText.innerText = "🎉 $3000";
-                    totalAssets += 3000;
-                    setTimeout(() => showMessage("🎉 恭喜發財", "運氣太好了！<br>獲得大獎 <b>$3000</b>！"), 800);
+                    
+                    totalAssets += 3000; 
+                    updateTotalAssetsDisplay();
+                    sendDataToBackend(`抽中大獎！目前資產 $${totalAssets}`); 
+                    setTimeout(() => showMessage("🎉 恭喜發財", "獲得大獎 <b>$3000</b>！"), 800);
                 } else {
                     chest.classList.add('open-money');
                     resultText.innerText = "$3000";
                 }
             } else {
                 const smallPrize = Math.random() > 0.5 ? 800 : 0;
-                
                 if (idx === selectedChestIndex) {
                     if (smallPrize > 0) {
                         chest.classList.add('open-money');
                         resultText.innerText = `😮 $${smallPrize}`;
+                        
                         totalAssets += smallPrize;
+                        updateTotalAssetsDisplay();
+                        sendDataToBackend(`抽中小獎！目前資產 $${totalAssets}`);
                         setTimeout(() => showMessage("😮 還不錯", `獲得小獎 <b>$${smallPrize}</b>`), 800);
                     } else {
                         chest.classList.add('open-empty');
                         resultText.innerText = "💨 銘謝惠顧";
-                        setTimeout(() => showMessage("💨 哎呀...", "裡面什麼都沒有...<br>別氣餒，下次會更好！"), 800);
+                        
+                        sendDataToBackend(`抽獎落空。目前資產 $${totalAssets}`);
+                        setTimeout(() => showMessage("💨 哎呀...", "裡面什麼都沒有..."), 800);
                     }
                 } else {
-                    if(smallPrize > 0) {
-                        chest.classList.add('open-money');
-                        resultText.innerText = `$${smallPrize}`;
-                    } else {
-                        chest.classList.add('open-empty');
-                        resultText.innerText = "銘謝惠顧";
-                    }
+                    resultText.innerText = smallPrize > 0 ? `$${smallPrize}` : "銘謝惠顧";
+                    chest.classList.add(smallPrize > 0 ? 'open-money' : 'open-empty');
                     chest.classList.add('revealed'); 
                 }
             }
         });
 
-        // 🌟 更新但不存檔
-        updateTotalAssetsDisplay();
         setTimeout(() => { document.getElementById('replay-btn').classList.remove('hidden'); }, 1500);
     }
 </script>
