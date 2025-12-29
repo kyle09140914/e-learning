@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>我的全能早餐店 - 經營宇宙</title>
+    <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        /* 1. 基礎設定 */
+        html, body { height: 100%; width: 100%; margin: 0; padding: 0; overflow: hidden; background-color: #2c3e50; font-family: 'Microsoft JhengHei', sans-serif; }
+        .container { display: flex; flex-direction: column; height: 100vh; width: 100vw; background: #fff; border: 8px solid #e67e22; box-sizing: border-box; }
+        .hidden { display: none !important; }
+
+        /* 2. 標題與舞台 */
+        .header { flex: 0 0 50px; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; background: #e67e22; color: white; font-size: 20px; font-weight: bold; z-index: 100; }
+        .stage { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0; box-sizing: border-box; overflow: hidden; position: relative; }
+
+        /* 3. 初始標題畫面 */
+        #start-screen {
+            background: linear-gradient(135deg, #f1c40f 0%, #e67e22 100%);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; color: white;
+        }
+        .game-title {
+            font-size: 60px; font-weight: 900; 
+            text-shadow: 4px 4px 0px #d35400;
+            margin-bottom: 20px; letter-spacing: 2px;
+            animation: bounceIn 1s;
+        }
+        .start-btn {
+            padding: 15px 50px; font-size: 30px; background: white; color: #d35400;
+            border: 5px solid #d35400; border-radius: 50px; font-weight: bold;
+            cursor: pointer; transition: 0.3s; box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            animation: pulse 2s infinite;
+        }
+        .start-btn:hover { transform: scale(1.1); background: #fff3e0; }
+        @keyframes bounceIn { 0% { transform: scale(0.1); opacity: 0; } 60% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(1); } }
+
+        /* 4. 擬真場景佈局 */
+        #game-zone {
+            background: url('https://img.freepik.com/free-photo/blurred-coffee-shop_1203-227.jpg') center/cover;
+            position: relative;
+        }
+
+        .counter-desk {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 35%;
+            background: url('https://img.freepik.com/free-photo/wooden-plank-textured-background-material_53876-33591.jpg') center/cover;
+            border-top: 15px solid #5d4037;
+            box-shadow: 0 -10px 50px rgba(0,0,0,0.5);
+            z-index: 10; display: flex; flex-direction: column; align-items: center;
+        }
+
+        .char-img { 
+            position: absolute; bottom: 30%; left: 50%; transform: translateX(-80%);
+            height: 65%; object-fit: contain; 
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));
+            transition: 0.3s; z-index: 5;
+        }
+
+        /* 5. 介面元件 */
+        .stat-bar { 
+            position: absolute; top: 10px; left: 2%; width: 96%; height: 60px; 
+            background: rgba(255, 255, 255, 0.95); border: 3px solid #e67e22; border-radius: 50px; 
+            display: flex; justify-content: space-around; align-items: center; 
+            z-index: 20; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .bubble { 
+            position: absolute; top: 100px; left: 5%; width: 50%; 
+            background: white; border: 4px solid #333; border-radius: 30px; padding: 20px; 
+            font-size: 20px; line-height: 1.5; box-shadow: 10px 10px 0px rgba(0,0,0,0.1); z-index: 15;
+        }
+        .bubble::after { content: ''; position: absolute; bottom: -20px; left: 100px; border-width: 20px 20px 0; border-style: solid; border-color: #333 transparent transparent transparent; }
+
+        .option-zone { 
+            position: absolute; bottom: 20px; right: 20px; width: 40%; height: 50%;
+            display: flex; flex-direction: column; justify-content: flex-end; 
+            z-index: 30; padding-bottom: 20px;
+        }
+        .option-btn { 
+            width: 100%; padding: 15px; margin: 6px 0; 
+            border: 3px solid #8e44ad; background: white; color: #2c3e50;
+            border-radius: 15px; cursor: pointer; font-size: 20px; font-weight: bold; 
+            transition: 0.2s; box-shadow: 0 5px #6c3483;
+        }
+        .option-btn:hover { transform: translateY(-3px); background: #f4ecf7; }
+        .option-btn:active { transform: translateY(2px); box-shadow: 0 0 #6c3483; }
+
+        #persistent-hint { 
+            position: absolute; top: 320px; left: 5%; width: 50%;
+            background: rgba(255, 243, 205, 0.95); color: #856404; border: 2px solid #ffeeba; 
+            padding: 15px; border-radius: 15px; font-size: 18px; line-height: 1.4; display: none; z-index: 15;
+        }
+
+        /* 6. 動畫與互動視窗 */
+        .flying-coin {
+            position: absolute; bottom: -100px; left: 50%; width: 80px; height: 80px;
+            background: url('https://cdn-icons-png.flaticon.com/512/2460/2460475.png') center/contain no-repeat;
+            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.3)); z-index: 50;
+            animation: payMoney 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+        @keyframes payMoney {
+            0% { transform: translateY(0) scale(1) rotate(0deg); opacity: 1; }
+            80% { opacity: 1; }
+            100% { transform: translateY(-400px) scale(0.6) rotate(360deg); opacity: 0; }
+        }
+        #paid-stamp {
+            position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%);
+            text-align: center; z-index: 60; pointer-events: none;
+        }
+        .stamp-anim { animation: stampIn 0.5s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards; }
+        @keyframes stampIn { from { transform: translate(-50%, -50%) scale(3); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
+
+        .buy-btn { padding: 8px 20px; background: #e74c3c; color: white; border: none; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.3s; box-shadow: 0 4px #c0392b; }
+        .buy-btn:active { transform: translateY(4px); box-shadow: 0 0 #c0392b; }
+        .buy-btn:disabled { background: #bdc3c7; color: #7f8c8d; box-shadow: none; cursor: not-allowed; opacity: 0.8; transform: none; }
+        
+        .feedback-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 300; }
+        .feedback-box { width: 500px; background: white; border: 6px solid #e67e22; border-radius: 30px; padding: 30px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .info-board { width: 85%; max-width: 600px; background: #fef5e7; border: 6px double #e67e22; border-radius: 30px; padding: 30px; text-align: left; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        
+        /* 大廳佈局 (RWD) */
+        #level-map { 
+            display: flex; flex-direction: column; 
+            justify-content: space-evenly; 
+            align-items: center; 
+            height: calc(100vh - 50px);
+            padding: 10px; 
+            overflow-y: auto;
+        }
+        
+        .menu-section-title { 
+            font-size: 22px; font-weight: bold; color: #d35400; 
+            display: flex; align-items: center; gap: 10px; margin: 0; 
+        }
+        .menu-section-title::before, .menu-section-title::after {
+            content: ""; display: block; width: 40px; height: 3px; background: #d35400; opacity: 0.5; border-radius: 2px;
+        }
+
+        .level-container { display: flex; gap: 30px; justify-content: center; flex-wrap: wrap; margin-bottom: 10px; }
+        
+        .level-card { 
+            width: 220px; height: 250px; background: white; 
+            border: 4px solid #e67e22; border-radius: 20px; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            cursor: pointer; transition: 0.3s; box-shadow: 0 8px 20px rgba(0,0,0,0.15); 
+            position: relative; overflow: hidden; 
+        }
+        .level-card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.2); }
+        
+        /* 鎖定商店 (星空主題) */
+        .level-card.locked { 
+            border: 4px solid #2c3e50; 
+            background: linear-gradient(135deg, #1a252f 0%, #2c3e50 100%); 
+            cursor: default; box-shadow: inset 0 0 30px #000;
+        }
+        .level-card.locked:hover { transform: none; box-shadow: inset 0 0 30px #000; }
+        
+        .lock-overlay { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            color: #f1c40f; text-shadow: 0 0 10px rgba(241, 196, 15, 0.5); z-index: 5;
+        }
+        
+        .unlock-btn { 
+            padding: 8px 16px; background: #f39c12; color: white; border: 2px solid #e67e22; 
+            border-radius: 20px; font-weight: bold; cursor: pointer; margin-top: 15px; 
+            font-size: 15px; animation: pulse 1.5s infinite; transition: 0.2s;
+            box-shadow: 0 4px 10px rgba(243, 156, 18, 0.4);
+        }
+        .unlock-btn:hover { background: #e67e22; transform: scale(1.05); }
+        
+        .lock-msg { 
+            color: #e74c3c; background: rgba(255, 255, 255, 0.95); padding: 5px 12px; border-radius: 15px; 
+            font-weight: bold; font-size: 14px; margin-top: 10px; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        /* 福利社卡片 */
+        .welfare-card { 
+            width: 470px; height: 120px; 
+            background: linear-gradient(to right, #ffffff, #eaf2f8); 
+            border: 4px solid #3498db; border-radius: 20px; 
+            display: flex; align-items: center; justify-content: space-around; 
+            cursor: pointer; transition: 0.3s; box-shadow: 0 8px 20px rgba(52, 152, 219, 0.2);
+        }
+        .welfare-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(52, 152, 219, 0.4); }
+
+        .video-container { aspect-ratio: 16 / 9; width: min(95vw, calc((100vh - 300px) * 1.777)); border: 5px solid #f1c40f; border-radius: 15px; background: #000; flex-shrink: 0; margin: 0 auto; }
+        iframe { width: 100%; height: 100%; border: none; overflow: hidden; }
+        .btn { padding: 12px 50px; background: #27ae60; color: white; border: none; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+        #timer-msg { color: #f1c40f; font-size: 18px; font-weight: bold; margin-top: 15px; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.9; transform: scale(1.05); } 100% { opacity: 1; transform: scale(1); } }
+
+        /* 盲盒遊戲 */
+        #guess-box-game { background: #2c3e50; justify-content: center; align-items: center; flex-direction: column; }
+        .chest-container { display: flex; gap: 50px; margin: 30px 0; }
+        .chest { width: 180px; height: 180px; background: url('https://cdn-icons-png.flaticon.com/512/4230/4230569.png') center/contain no-repeat; cursor: pointer; transition: 0.2s; position: relative; }
+        .chest:hover { transform: scale(1.1) rotate(5deg); }
+        .chest.disabled { filter: grayscale(100%); opacity: 0.5; cursor: not-allowed; transform: none; }
+        .chest.open-empty { background-image: url('https://cdn-icons-png.flaticon.com/512/4230/4230563.png'); filter: grayscale(100%); opacity: 0.8; }
+        .chest.open-money { background-image: url('https://cdn-icons-png.flaticon.com/512/4230/4230606.png'); filter: none; opacity: 1; transform: scale(1.1); }
+        .asset-tag { background: #f1c40f; color: #333; padding: 10px 20px; border-radius: 50px; font-weight: bold; font-size: 24px; border: 3px solid #e67e22; }
+        .chest-result { position: absolute; bottom: -40px; left: 50%; transform: translateX(-50%); color: white; font-weight: bold; font-size: 20px; white-space: nowrap; opacity: 0; transition: 0.5s; }
+        .chest.revealed .chest-result { opacity: 1; bottom: -30px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="start-screen" class="stage" style="z-index: 200;">
+        <div class="game-title">🍳 經營宇宙：我的全能早餐店</div>
+        <div style="font-size: 24px; margin-bottom: 40px; opacity: 0.9;">數學與商業的結合</div>
+        <button class="start-btn" onclick="enterGame()">🚀 開始經營</button>
+    </div>
+
+    <div class="header">
+        <div>🍳 經營宇宙</div>
+        <div id="total-assets-display" style="background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px;">
+            🏦 銀行總資產: $0
+        </div>
+    </div>
+
+    <div id="login-modal" class="feedback-overlay hidden" style="z-index: 300;">
+        <div class="feedback-box" style="border-color: #e67e22; width: 450px;">
+            <h2 style="color: #d35400; font-size: 28px; margin-bottom: 20px;">請輸入店長編號 (學號)</h2>
+            <input type="text" id="student-id-input" placeholder="例如: s123456" 
+                   style="font-size: 20px; padding: 10px; width: 80%; border: 2px solid #bdc3c7; border-radius: 10px; text-align: center; margin-bottom: 20px;">
+            <div>
+                <button class="btn" style="background: #e67e22; padding: 10px 40px;" onclick="submitLogin()">確定</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="level-map" class="stage hidden" style="background: #f1c40f;">
+        
+        <div class="menu-section-title">🏙️ 商店街經營</div>
+        <div class="level-container">
+            <div class="level-card" onclick="showLevelStory('元氣早餐店', '二元一次方程式', '學區的客人習慣同時購買包子與豆漿，小心計算別找錯錢！')">
+                <div style="font-size:60px;">🍳</div>
+                <h3 style="font-size:22px; margin:10px 0;">元氣早餐店</h3>
+                <p>主題：二元一次</p>
+                <div style="color:#27ae60; font-weight:bold;">● 營業中</div>
+            </div>
+            
+            <div class="level-card locked" id="shop-2-card">
+                <div style="font-size:60px; filter: drop-shadow(0 0 5px #f1c40f);">🍜</div>
+                <h3 style="font-size:22px; margin:10px 0; color: #ecf0f1;">深夜食堂</h3>
+                <p style="color: #bdc3c7;">主題：比例式</p>
+                
+                <div class="lock-overlay" id="shop-2-lock">
+                    <div style="font-size:40px;">🔒</div>
+                    <div style="font-size:18px; margin-top:5px; color:#fff; font-weight:bold;">未解鎖</div>
+                    
+                    <button id="shop-2-btn" class="unlock-btn hidden" onclick="tryUnlockShop(event)">
+                        🔓 花費 $300 解鎖
+                    </button>
+                    
+                    <div id="shop-2-msg" class="lock-msg">
+                        🔒 資金未達標 (需 $300)
+                    </div>
+                </div>
+                <div class="hidden" id="shop-2-open" style="color:#27ae60; font-weight:bold; margin-top:10px;">● 營業中</div>
+            </div>
+        </div>
+
+        <div class="menu-section-title" style="color:#2980b9;">🎁 員工福利社</div>
+        <div class="welfare-card" onclick="startGuessBoxGame()">
+            <div style="font-size:70px;">🎁</div>
+            <div style="text-align: left;">
+                <h3 style="margin:5px 0; color:#3498db; font-size:24px;">樂透抽抽抽💰</h3>
+                <p style="margin:0; color:#555; font-size:16px;">賺錢辛苦了！來抽個盲盒試試手氣吧！</p>
+            </div>
+            <div style="font-size:30px; color:#e74c3c;">➔</div>
+        </div>
+    </div>
+
+    <div id="level-info" class="stage hidden" style="background: rgba(0,0,0,0.85);">
+        <div class="info-board">
+            <h2 id="info-title" style="text-align: center; color: #e67e22;"></h2>
+            <div style="margin: 20px 0; font-size: 18px; line-height: 1.6; color: #5d4037;">
+                <p id="info-story"></p>
+                <p><strong>本關任務：</strong>運用方程式精準結帳，累積營業額存入銀行！</p>
+                <p style="color:#c0392b; font-weight:bold;">⚠️ 注意：如果倒閉，將倒扣銀行資產 $300 作為食材賠償！</p>
+            </div>
+            <div style="text-align:center;">
+                <button class="btn" onclick="startStory()">接受挑戰</button>
+                <button class="btn" style="background:#7f8c8d;" onclick="showStage('level-map')">稍後再試</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="intro-phase" class="stage hidden" style="background: url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=1000') center/cover;">
+        <div style="background:rgba(255,255,255,0.95); border:4px solid #e67e22; border-radius:20px; padding:25px; width:80%; cursor:pointer;" onclick="nextDialogue()">
+            <div style="font-weight:bold; color:#e67e22; font-size:22px;" id="speaker-name">經營顧問</div>
+            <div id="dialogue-content" style="font-size: 20px; margin-top:10px;">...</div>
+            <div style="text-align: right; font-size: 14px; color: #aaa;">點擊繼續 ▼</div>
+        </div>
+    </div>
+
+    <div id="learning-phase" class="stage hidden" style="background:#34495e;">
+        <div class="video-container">
+            <iframe id="h5p-container" src="https://kxc24.h5p.com/content/1292776058263996339/embed" allowfullscreen></iframe>
+        </div>
+        <div id="timer-msg">🔒 培訓進行中...</div>
+        <button id="start-game-btn" class="btn" onclick="startGame()" style="display:none;">🎓 培訓完成，正式開店！</button>
+        <button class="btn" style="background: #95a5a6; font-size: 16px; padding: 10px 30px;" onclick="returnToMap()">🏙️ 返回大廳</button>
+    </div>
+
+    <div id="game-zone" class="stage hidden">
+        <div class="stat-bar">
+            <div id="customer-count" style="font-size:20px; font-weight:bold; color:#2c3e50;">👤 第 1 / 10 位顧客</div>
+            <div id="correct-display" style="font-size:18px; font-weight:bold; color:#27ae60;">✅ 答對: 0 題</div>
+            <div id="score-display" style="font-size:20px; font-weight:bold; color:#d35400;">💰 本次營收: $0</div>
+            <button id="buy-heart-btn" onclick="buyHeart()" class="buy-btn" disabled>🔒 答對5題後解鎖</button>
+            <div id="hp-display" style="font-size:20px; font-weight:bold; color:#d35400;">❤️ 滿意度: ❤️❤️❤️</div>
+        </div>
+        <img id="char-img" class="char-img" src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png" alt="Customer">
+
+        <div class="bubble">
+            <p id="q-text" style="margin: 0;">題目載入中...</p>
+        </div>
+
+        <div id="persistent-hint"></div>
+
+        <div class="counter-desk">
+            <div id="paid-stamp" class="hidden">
+                <img src="https://cdn-icons-png.flaticon.com/512/5610/5610944.png" alt="Paid" width="120">
+                <div style="color: #27ae60; font-weight:bold; font-size: 24px; text-shadow: 2px 2px 0 #fff;">支付成功！<br>滿意度 +1 ❤️</div>
+            </div>
+        </div>
+
+        <div class="option-zone" id="options-container"></div>
+        <div id="money-container"></div>
+    </div>
+
+    <div id="feedback-modal" class="feedback-overlay hidden">
+        <div class="feedback-box">
+            <h2 id="fb-title" style="font-size: 36px; margin: 10px 0;">🎉 太棒了！</h2>
+            <p id="fb-msg" style="font-size: 22px; color: #555;">客人很滿意，營收 +$200</p>
+            <div id="fb-hint" style="background:#fff3cd; padding:15px; border-radius:10px; margin: 15px 0; text-align: left; display: none;"></div>
+            <button id="fb-btn" class="btn" onclick="closeFeedback()">繼續下一位客人 ▶</button>
+        </div>
+    </div>
+
+    <div id="guess-box-game" class="stage hidden">
+        <h2 style="color: white; margin-bottom: 20px;">📦 幸運盲盒 (入場費 $500)</h2>
+        <div class="asset-tag" id="game-asset-display">🏦 資產: $0</div>
+        
+        <div class="chest-container" id="chest-container"></div>
+        
+        <button id="replay-btn" class="btn hidden" style="background:#f1c40f; color:#333;" onclick="startGuessBoxGame()">🔄 花 $500 再抽一次</button>
+
+        <div style="margin-top: 30px;">
+            <button class="btn" style="background:#7f8c8d;" onclick="returnToMap()">🏙️ 返回大廳</button>
+        </div>
+    </div>
+
+    <div id="message-modal" class="feedback-overlay hidden">
+        <div class="feedback-box" style="border-color: #3498db; width: 450px;">
+            <h2 id="msg-title" style="color: #3498db; font-size: 32px;">標題</h2>
+            <p id="msg-content" style="font-size: 20px; color: #555;">內容</p>
+            <div style="margin-top: 25px; display: flex; justify-content: center; gap: 15px;">
+                <button id="msg-ok-btn" class="btn" style="background: #3498db; margin:0;">確定</button>
+                <button id="msg-cancel-btn" class="btn" style="background: #95a5a6; margin:0; display:none;">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="fail-menu" class="stage hidden" style="background: rgba(44, 62, 80, 0.95);">
+        <div style="background:white; padding:40px; border-radius:25px; text-align:center; max-width: 500px;">
+            <h2 id="end-title" style="color: #c0392b; font-size: 32px;">💔 營業結束</h2>
+            <p style="font-size: 20px;">本次營收：<span id="end-score" style="color: #27ae60; font-weight:bold;">$0</span></p>
+            <p id="end-asset-msg" style="color: #7f8c8d; font-size: 18px; margin-top:10px;">(已存入您的銀行總資產)</p>
+            
+            <div id="win-buttons" class="hidden">
+                <button class="btn" style="background:#3498db; color:white;" onclick="startGuessBoxGame()">🎁 前往福利社花錢！</button>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
+                <button class="btn" style="background:#e67e22;" onclick="retryGame()">🔄 重新開店</button>
+                <button class="btn" style="background:#7f8c8d;" onclick="returnToMap()">🏙️ 返回大廳</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbz4lAFfiUKRhIyvef0iKT97oKentBSAaMHVw0hrdo2rhONyCIS-rEkqWJYLNgUYVcL6/exec";
+
+    let studentName = ""; 
+
+    const FORM_ID = "1FAIpQLSeS9bZw8ws3S-ziLfAA56wX6UjQ4MgZGHOJrPAmdmGEiJ9HYw"; 
+    const ID_NAME = "entry.327783741";   
+    const ID_STATUS = "entry.128889017"; 
+    const ID_ASSETS = "entry.1448499411"; 
+    const ID_SCORE = "entry.669904798";
+
+    function sendDataToBackend(status) {
+        if (!studentName || studentName.trim() === "") return; 
+
+        const url = `https://docs.google.com/forms/d/e/${FORM_ID}/formResponse`;
+        const params = new URLSearchParams();
+        params.append(ID_NAME, studentName);
+        params.append(ID_STATUS, status);
+        params.append(ID_ASSETS, totalAssets);
+        params.append(ID_SCORE, correctCount);
+
+        fetch(url, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: params.toString()
+        }).then(() => console.log("✅ 數據已成功同步：" + status))
+          .catch(e => console.error("❌ 同步失敗：", e));
+    }
+
+    let score = 0, hp = 3, currentQ = 0, shuffledQuiz = [];
+    let correctCount = 0; 
+    let totalAssets = 0;  
+    const HEART_COST = 400; 
+    const CHEST_COST = 500; 
+    const SHOP_UNLOCK_COST = 300; 
+    const FAIL_PENALTY = 300; 
+    let unlockTimer = null;
+    let lastRoundCorrect = false; 
+    let selectedChestIndex = -1;
+    let isGameLocked = false; 
+    let isShop2Unlocked = false; 
+
+    // 🌟 初始化：清除紀錄、顯示標題畫面
+    window.onload = function() {
+        // 1. 強制清除舊紀錄 (不留檔)
+       // localStorage.clear();
+        
+        totalAssets = 0;
+        isShop2Unlocked = false;
+        
+        updateTotalAssetsDisplay();
+        updateShopUI();
+        updateShopLockState();
+        
+        // 2. 顯示標題，隱藏其他
+        document.getElementById('start-screen').classList.remove('hidden');
+        document.getElementById('level-map').classList.add('hidden');
+        document.getElementById('login-modal').classList.add('hidden');
+    };
+
+    // 🌟 點擊開始經營 -> 顯示輸入框
+    function enterGame() {
+        document.getElementById('login-modal').classList.remove('hidden');
+    }
+
+    // 🌟 提交學號 -> 進入大廳
+    // 🌟 加入存檔讀取
+    // 🌟 修正後的登入提交函式
+// 🌟 雲端讀取邏輯
+// 🌟 修正後的登入提交函式
+    async function submitLogin() {
+        const input = document.getElementById('student-id-input');
+        const val = input.value.trim();
+        if (!val) { showMessage("⚠️ 提示", "請輸入學號"); return; }
+        
+        studentName = val;
+        // 隱藏登入輸入框
+        document.getElementById('login-modal').classList.add('hidden');
+        showMessage("🌐 雲端同步中", "正在連接經營宇宙數據庫...", false);
+
+        try {
+            const response = await fetch(`${GAS_URL}?id=${studentName}`);
+            const cloudData = await response.json();
+
+            // 關閉「同步中」的訊息
+            document.getElementById('message-modal').classList.add('hidden');
+
+            if (cloudData.found) {
+                totalAssets = parseInt(cloudData.assets) || 0;
+                // 🌟 關鍵修正：點擊確定後必須執行 enterMainMap
+                showMessage("👋 歡迎回來", `店長 ${studentName}，雲端進度已同步！<br>目前資產：$${totalAssets}`, false, () => {
+                    enterMainMap();
+                });
+            } else {
+                totalAssets = 0;
+                showMessage("✨ 新店開幕", `歡迎新店長 ${studentName}！<br>這是您在雲端的全新存檔。`, false, () => {
+                    enterMainMap();
+                });
+            }
+        } catch (e) {
+            // 離線模式備案
+            const localData = JSON.parse(localStorage.getItem('game_save_' + studentName));
+            totalAssets = localData ? localData.assets : 0;
+            showMessage("⚠️ 離線模式", "無法連線雲端，已切換至本地存檔。", false, () => {
+                enterMainMap();
+            });
+        }
+    }
+    // 🌟 修正後的 GAS doGet 函式
+// 🌟 修正後的 GAS 腳本 (後台)
+    function doGet(e) {
+    var id = e.parameter.id;
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+    var data = sheet.getDataRange().getValues();
+    
+    var result = { found: false };
+    for (var i = 1; i < data.length; i++) {
+        if (data[i][0] == id) {
+        result = {
+            found: true,
+            assets: parseInt(data[i][1]) || 0,
+            shop2: data[i][2] === "true" || data[i][2] === true
+        };
+        break;
+        }
+    }
+    return ContentService.createTextOutput(JSON.stringify(result)).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    function doPost(e) {
+    var ss = SpreadsheetApp.getActiveSpreadsheet(); // ⭐ 一定要有
+    var sheet = ss.getSheets()[0];
+    var params = JSON.parse(e.postData.contents);
+    var id = params.id;
+    var assets = params.assets;
+    var shop2 = params.shop2;
+    
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+    var data = sheet.getDataRange().getValues();
+    var foundRow = -1;
+
+    for (var i = 1; i < data.length; i++) {
+        if (data[i][0] == id) { foundRow = i + 1; break; }
+    }
+
+    // GAS 端關鍵判斷
+    if (params.type === "quiz_log") {
+        var logSheet = ss.getSheetByName("答題日誌"); 
+        if (logSheet) {
+            logSheet.appendRow([
+                new Date(),      // 時間
+                params.id,       // 學號
+                params.question, // 題目內容
+                params.choice,   // 玩家選擇
+                params.result    // 🌟 這裡必須是 params.result，對應前端發送的欄位
+            ]);
+        }
+    }
+
+    if (foundRow != -1) {
+        sheet.getRange(foundRow, 2).setValue(Number(params.assets));
+        sheet.getRange(foundRow, 3).setValue(shop2);
+    } else {
+        sheet.appendRow([id, assets, shop2]);
+    }
+    return ContentService.createTextOutput("Success");
+    }    
+    
+    // 🌟 新增：統一進入大廳的邏輯
+    // 🌟 確保進入大廳前先讀取並更新數值
+    // 🌟 修正後的進入大廳函式
+    function enterMainMap() {
+        // 隱藏標題畫面
+        document.getElementById('start-screen').classList.add('hidden');
+        // 顯示大地圖
+        document.getElementById('level-map').classList.remove('hidden');
+        
+        // 更新所有金錢標籤顯示
+        updateTotalAssetsDisplay();
+        updateShopUI();
+        updateShopLockState();
+        
+        sendDataToBackend("成功登入並讀取紀錄");
+    }    
+    
+    // 🌟 新增：儲存函式
+    function saveGameProgress() {
+        if (!studentName) return;
+        
+        const gameData = {
+            type: "save_progress",
+            id: studentName,
+            assets: totalAssets,
+            shop2: isShop2Unlocked
+        };
+        
+        // 1. 存到本地
+        localStorage.setItem('game_save_' + studentName, JSON.stringify(gameData));
+        
+        // 2. 非同步傳送到雲端
+        fetch(GAS_URL, {
+            method: "POST",
+            body: JSON.stringify(gameData)
+        }).then(() => console.log("☁️ 雲端存檔成功"))
+        .catch(e => console.warn("☁️ 雲端同步失敗", e));
+    }// 🌟 修正後的資產顯示函式
+
+    function updateTotalAssetsDisplay() {
+        const text = `$${totalAssets}`;
+        
+        // 修正：找到正確的頂部標籤 ID
+        const topDisplay = document.getElementById('total-assets-display');
+        if (topDisplay) topDisplay.innerText = `🏦 銀行總資產: ${text}`;
+        
+        // 修正：找到福利社內的資產標籤
+        const gameAssetDisplay = document.getElementById('game-asset-display');
+        if (gameAssetDisplay) gameAssetDisplay.innerText = `🏦 資產: ${text}`;
+        
+        // 同步更新遊戲中的小錢包文字
+        const gameWallet = document.getElementById('game-wallet');
+        if (gameWallet) gameWallet.innerText = totalAssets;
+
+        saveGameProgress(); // 確保每次更新顯示後都立即存入 localStorage
+    }
+    const charImages = [
+        "https://cdn-icons-png.flaticon.com/512/4140/4140048.png", 
+        "https://cdn-icons-png.flaticon.com/512/4140/4140047.png", 
+        "https://cdn-icons-png.flaticon.com/512/6997/6997662.png", 
+        "https://cdn-icons-png.flaticon.com/512/4140/4140037.png"
+    ];
+
+    const quizData = [
+        { q: "我要買7個肉包和2杯豆漿共129元，另一次買3個肉包和4杯豆漿是93元。請問肉包一個多少？", options: ["$12", "$15", "$18", "$20"], a: "$15", hint: "設肉包x、豆漿y。把豆漿數量變一樣(找2和4的公倍數)再相減就能消掉豆漿囉！" },
+        { q: "我點了 $$3x - 4(x - 2y) + 5$$ 這麼多，化簡後 x 的係數是多少？", options: ["1", "3", "-1", "-4"], a: "-1", hint: "注意括號前的負號！-4 乘進去時，裡面的 -2y 要變號喔。" },
+        { q: "數量滿足 $$7x + 3y = 27$$。如果 y 是 2，那 x 是多少？", options: ["3", "4", "5", "6"], a: "3", hint: "把 y=2 代進去：7x + 6 = 27，接著解 x 就可以了。" },
+        { q: "兩份連續正整數餐點編號相加是 21，編號較大的是多少？", options: ["10", "11", "12", "13"], a: "11", hint: "設小號x，大號x+1。x + (x+1) = 21，算出x後記得+1才是大號喔。" },
+        { q: "2份A餐與3份B餐共220元，A比B貴10元，那B餐多少元？", options: ["$35", "$40", "$45", "$50"], a: "$40", hint: "設B為x，則A是(x+10)。2(x+10) + 3x = 220，解出x即可。" },
+        { q: "化簡 $$2(x + 3y) - 3(2x - y)$$ 後，y 項係數是多少？", options: ["3", "6", "9", "-3"], a: "9", hint: "拆括號：2x+6y 和 -6x+3y。把y合起來：6y+3y=9y。" },
+        { q: "若 (1, -1) 是 $$ax + by = 5$$ 的解，且 a+b=1，那 a 是多少？", options: ["2", "3", "4", "5"], a: "3", hint: "代入得 a-b=5，跟 a+b=1 解聯立。兩式相加：2a=6，a=3。" },
+        { q: "我有x張百元鈔和y個十元幣共540元。若x+y=18，則x是多少？", options: ["4", "5", "6", "7"], a: "4", hint: "錢：100x+10y=540。量：x+y=18。把第二式x10相減。" },
+        { q: "父x歲子y歲。五年前父是子的3倍，正確式子是？", options: ["x-5 = 3(y-5)", "x = 3y", "x+5 = 3(y+5)", "x-5 = 3y-5"], a: "x-5 = 3(y-5)", hint: "五年前兩人都要減5歲，記得要把(y-5)括號起來乘3倍。" },
+        { q: "大數小數差8，大數是小數的2倍少2，求大數？", options: ["14", "16", "18", "20"], a: "18", hint: "設小數x，大數x+8。x+8 = 2x - 2，解出x再加8。" }
+    ];
+
+    function showStage(stageId) {
+        document.querySelectorAll('.stage').forEach(s => {
+            if(s.id !== 'start-screen' && s.id !== 'login-modal') s.classList.add('hidden');
+        });
+        document.getElementById(stageId).classList.remove('hidden');
+        
+        if(stageId === 'mini-game-menu' || stageId === 'guess-box-game') {
+            updateTotalAssetsDisplay();
+        }
+        if(stageId === 'level-map') {
+            updateShopLockState();
+        }
+    }
+
+    function showLevelStory(title, topic, story) {
+        document.getElementById('info-title').innerText = `📜 關卡：${title}`;
+        document.getElementById('info-story').innerHTML = `${story}<br><br><strong>⚠️ 失敗懲罰：</strong>若經營失敗，將倒扣資產 <b>$${FAIL_PENALTY}</b>！`;
+        showStage('level-info');
+    }
+
+    function showMessage(title, content, isConfirm = false, onConfirm = null) {
+        const modal = document.getElementById('message-modal');
+        const mTitle = document.getElementById('msg-title');
+        const mContent = document.getElementById('msg-content');
+        const btnOk = document.getElementById('msg-ok-btn');
+        const btnCancel = document.getElementById('msg-cancel-btn');
+
+        mTitle.innerText = title;
+        mContent.innerHTML = content;
+        modal.classList.remove('hidden');
+
+        btnOk.onclick = null;
+        btnCancel.onclick = null;
+        btnCancel.style.display = isConfirm ? 'inline-block' : 'none';
+
+        btnOk.onclick = () => {
+            modal.classList.add('hidden');
+            if(onConfirm) onConfirm();
+        };
+        
+        if(isConfirm) {
+            btnCancel.onclick = () => {
+                modal.classList.add('hidden');
+            };
+        }
+    }
+
+    function updateShopLockState() {
+        if(isShop2Unlocked) return; 
+
+        const btn = document.getElementById('shop-2-btn');
+        const msg = document.getElementById('shop-2-msg');
+
+        if(totalAssets >= SHOP_UNLOCK_COST) {
+            btn.classList.remove('hidden'); 
+            msg.classList.add('hidden');    
+        } else {
+            btn.classList.add('hidden');    
+            msg.classList.remove('hidden'); 
+        }
+    }
+
+    function tryUnlockShop(event) {
+        event.stopPropagation(); 
+        
+        if(isShop2Unlocked) return;
+
+        if (totalAssets < SHOP_UNLOCK_COST) {
+            showMessage("💸 資金不足", `解鎖新店面需要 <b>$${SHOP_UNLOCK_COST}</b><br>您目前只有 $${totalAssets}。`);
+            return;
+        }
+
+        showMessage("🔒 解鎖新店面", `確定花費 <b>$${SHOP_UNLOCK_COST}</b><br>解鎖「深夜食堂」嗎？`, true, () => {
+            totalAssets -= SHOP_UNLOCK_COST;
+            isShop2Unlocked = true;
+            // 🌟 不存檔
+            updateTotalAssetsDisplay();
+            updateShopUI();
+            setTimeout(() => showMessage("🎉 解鎖成功", "您已擴展版圖！<br>現在可以經營「深夜食堂」了！"), 500);
+        });
+    }
+
+    function updateShopUI() {
+        if(isShop2Unlocked) {
+            const card = document.getElementById('shop-2-card');
+            const lock = document.getElementById('shop-2-lock');
+            const open = document.getElementById('shop-2-open');
+            card.classList.remove('locked');
+            card.style.background = "white";
+            card.style.border = "4px solid #e67e22";
+            card.querySelector('h3').style.color = "black";
+            card.querySelector('p').style.color = "black";
+            card.querySelector('div[style*="font-size:60px"]').style.filter = "none";
+            
+            card.onclick = () => showMessage("🚧 施工中", "第二關內容製作中，敬請期待！"); 
+            lock.classList.add('hidden');
+            open.classList.remove('hidden');
+        }
+    }
+
+    function startStory() {
+        showStage('intro-phase'); nextDialogue();
+    }
+
+    let dialIdx = 0;
+    function nextDialogue() {
+        const stories = ["這裡的客人很挑剔，算錯錢會倒閉喔！", "準備好了嗎？先進行職前培訓吧。"];
+        if (dialIdx < stories.length) {
+            document.getElementById('dialogue-content').innerText = stories[dialIdx];
+            dialIdx++;
+        } else {
+            showStage('learning-phase');
+            startUnlockTimer(112); 
+        }
+    }
+
+    function startUnlockTimer(seconds) {
+        if (unlockTimer) clearInterval(unlockTimer);
+        let remaining = seconds;
+        const btn = document.getElementById('start-game-btn');
+        const msg = document.getElementById('timer-msg');
+        btn.style.display = 'none'; msg.style.display = 'block';
+
+        unlockTimer = setInterval(() => {
+            remaining--;
+            let m = Math.floor(remaining / 60);
+            let s = remaining % 60;
+            msg.innerText = `🔒 培訓進行中... (${m}:${s < 10 ? "0"+s : s} 後解鎖)`;
+            if (remaining <= 0) {
+                clearInterval(unlockTimer);
+                msg.style.display = 'none';
+                btn.style.display = 'block';
+            }
+        }, 1000);
+    }
+
+    function returnToMap() {
+        document.getElementById('h5p-container').src = document.getElementById('h5p-container').src; 
+        if (unlockTimer) clearInterval(unlockTimer);
+        showStage('level-map');
+    }
+
+    function startGame() { 
+        document.getElementById('h5p-container').src = document.getElementById('h5p-container').src; 
+        retryGame(); 
+    }
+
+    function retryGame() {
+        showStage('game-zone');
+        shuffledQuiz = [...quizData].sort(() => Math.random() - 0.5);
+        currentQ = 0; hp = 3; score = 0; correctCount = 0;
+        updateStats(); renderQuestion();
+    }
+
+    function renderQuestion() {
+        if (currentQ >= shuffledQuiz.length) { endGame(true); return; }
+        
+        const q = shuffledQuiz[currentQ];
+        document.getElementById('q-text').innerHTML = q.q;
+        document.getElementById('persistent-hint').style.display = 'none';
+
+        document.getElementById('customer-count').innerText = `👤 第 ${currentQ + 1} / ${quizData.length} 位顧客`;
+
+        if (document.getElementById('char-img').dataset.qid !== String(currentQ)) {
+             const randomImg = charImages[Math.floor(Math.random() * charImages.length)];
+             document.getElementById('char-img').src = randomImg;
+             document.getElementById('char-img').dataset.qid = String(currentQ);
+        }
+
+        const container = document.getElementById('options-container');
+        container.innerHTML = ''; 
+        
+        q.options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(opt);
+            container.appendChild(btn);
+        });
+        if (window.MathJax) MathJax.typesetPromise();
+    }
+
+// 🌟 修正後的答題日誌回報邏輯
+// 🌟 修正後的答題日誌回報邏輯
+    function checkAnswer(ans) {
+        const q = shuffledQuiz[currentQ];
+        const isCorrect = (ans === q.a);
+        
+        // 🚀 關鍵：點擊後立刻發送！只發送這一次，並確保屬性名稱與 GAS 一致
+        fetch(GAS_URL, {
+            method: "POST",
+            mode: "no-cors", // 🌟 加上 no-cors 避免跨網域連線被瀏覽器攔截
+            body: JSON.stringify({
+                type: "quiz_log", 
+                id: studentName,
+                question: q.q.substring(0, 30), // 擷取前30字
+                choice: ans,
+                result: isCorrect ? "正確" : "錯誤" // 🌟 GAS 後台預期接收 params.result
+            })
+        });
+
+        // 原有的加減分邏輯維持不變
+        if (isCorrect) {
+            score += 200; correctCount++; lastRoundCorrect = true; showFeedback(true, q);
+        } else {
+            hp--; lastRoundCorrect = false; showFeedback(false, q);
+        }
+    }
+    function showFeedback(isCorrect, q) {
+        const modal = document.getElementById('feedback-modal');
+        const title = document.getElementById('fb-title');
+        const msg = document.getElementById('fb-msg');
+        const hint = document.getElementById('fb-hint');
+        const btn = document.getElementById('fb-btn');
+
+        modal.classList.remove('hidden');
+        
+        if (isCorrect) {
+            title.innerText = "🎉 答對了！";
+            title.style.color = "#27ae60";
+            msg.innerText = "客人很滿意，本次營收 +$200";
+            hint.style.display = 'none';
+            btn.innerText = "繼續下一位客人 ▶";
+            btn.style.background = "#27ae60";
+        } else {
+            title.innerText = "😱 算錯了...";
+            title.style.color = "#c0392b";
+            msg.innerText = "客人很生氣，滿意度 -1";
+            hint.style.display = 'block';
+            hint.innerHTML = `💡 <b>導師提示：</b>${q.hint}`;
+            btn.innerText = "🔙 了解，返回重試";
+            btn.style.background = "#e67e22";
+        }
+        updateStats();
+    }
+
+    function closeFeedback() {
+        document.getElementById('feedback-modal').classList.add('hidden');
+        
+        if (hp <= 0) {
+            endGame(false);
+            return;
+        }
+
+        if (lastRoundCorrect) {
+            currentQ++;
+            renderQuestion();
+        } else {
+            const pHint = document.getElementById('persistent-hint');
+            pHint.style.display = 'block';
+            pHint.innerHTML = `💡 <b>提示：</b>${shuffledQuiz[currentQ].hint}`;
+        }
+    }
+
+    function playCashierAnimation() {
+        const moneyContainer = document.getElementById('money-container');
+        const stamp = document.getElementById('paid-stamp');
+        stamp.classList.add('hidden');
+        stamp.classList.remove('stamp-anim');
+        moneyContainer.innerHTML = '';
+
+        for (let i = 0; i < 3; i++) {
+            const coin = document.createElement('div');
+            coin.className = 'flying-coin';
+            coin.style.animationDelay = `${i * 0.2}s`;
+            coin.style.left = `${40 + Math.random() * 20}%`;
+            moneyContainer.appendChild(coin);
+        }
+
+        setTimeout(() => {
+            stamp.classList.remove('hidden');
+            stamp.classList.add('stamp-anim');
+        }, 1200);
+
+        setTimeout(() => {
+            stamp.classList.add('hidden');
+            moneyContainer.innerHTML = '';
+        }, 3200);
+    }
+
+    function buyHeart() {
+        if (score >= HEART_COST && hp < 3) {
+            score -= HEART_COST;
+            hp++;
+            updateStats();
+            playCashierAnimation();
+        }
+    }
+
+    function updateStats() {
+        document.getElementById('score-display').innerText = `💰 本次營收: $${score}`;
+        
+        const correctDisplay = document.getElementById('correct-display');
+        if (correctDisplay) {
+            correctDisplay.innerText = `✅ 答對: ${correctCount} 題`;
+        }
+
+        let hearts = ""; 
+        for(let i=0; i<3; i++) hearts += (i < hp) ? "❤️" : "🖤";
+        document.getElementById('hp-display').innerText = `滿意度: ${hearts}`;
+
+        const btn = document.getElementById('buy-heart-btn');
+        if (correctCount < 5) {
+            btn.disabled = true;
+            btn.innerText = `🔒 再答對 ${5 - correctCount} 題解鎖`;
+            btn.style.background = "#95a5a6";
+        } else if (score < HEART_COST || hp >= 3) {
+            btn.disabled = true;
+            btn.innerText = (hp >= 3) ? "❤️ 滿意度已滿" : `💸 資金不足 ($${HEART_COST})`;
+            btn.style.background = "#95a5a6";
+        } else {
+            btn.disabled = false;
+            btn.innerText = `❤️ 購買好評 ($${HEART_COST})`;
+            btn.style.background = "#e74c3c";
+        }
+    }
+    
+    function endGame(isWin) {
+        showStage('fail-menu');
+        const title = document.getElementById('end-title');
+        const assetMsg = document.getElementById('end-asset-msg');
+        const winBtns = document.getElementById('win-buttons');
+        
+        // 🌟 修正重點：先算錢，再更新顯示，最後存檔
+        if (isWin) {
+            title.innerText = "🎉 完美打烊！";
+            title.style.color = "#27ae60";
+            assetMsg.innerText = "(已存入您的銀行總資產)";
+            winBtns.classList.remove('hidden'); 
+            totalAssets += score; // 只在這裡加一次
+        } else {
+            title.innerText = "💔 暫停營業";
+            title.style.color = "#c0392b";
+            totalAssets -= FAIL_PENALTY;
+            if(totalAssets < 0) totalAssets = 0;
+            assetMsg.innerHTML = `(挑戰失敗，資產倒扣 <b style='color:#e74c3c;'>-$${FAIL_PENALTY}</b> 😱)`;
+            winBtns.classList.add('hidden');
+        }
+        
+        // 🌟 刪除原本下方重複的 if (isWin) totalAssets += score 區塊
+        
+        updateTotalAssetsDisplay(); // 這會自動觸發 saveGameProgress 同步雲端
+        document.getElementById('end-score').innerText = `$${score}`;
+
+        sendDataToBackend(isWin ? "成功通關" : "經營失敗");
+    }
+
+    function startGuessBoxGame() {
+        showStage('guess-box-game');
+        document.getElementById('replay-btn').classList.add('hidden');
+        isGameLocked = false;
+        selectedChestIndex = -1;
+
+        const container = document.getElementById('chest-container');
+        container.innerHTML = '';
+
+        for(let i=0; i<3; i++) {
+            const chest = document.createElement('div');
+            chest.className = 'chest';
+            chest.dataset.index = i;
+            const resultText = document.createElement('div');
+            resultText.className = 'chest-result';
+            chest.appendChild(resultText);
+            chest.onclick = () => openChestConfirm(i);
+            container.appendChild(chest);
+        }
+    }
+
+    function openChestConfirm(index) {
+        if(isGameLocked) return;
+        if (totalAssets < CHEST_COST) {
+            showMessage("💸 餘額不足", "錢不夠玩這個啦！<br>快回去打工賺錢！");
+            return;
+        }
+        selectedChestIndex = index;
+        showMessage("💳 確認交易", `確定花費 <b style="color:#e74c3c;">$500</b><br>開啟這個盲盒嗎？`, true, confirmPurchase);
+    }
+
+    function confirmPurchase() {
+        totalAssets -= CHEST_COST;
+        updateTotalAssetsDisplay();
+        isGameLocked = true;
+        
+        const winnerIndex = Math.floor(Math.random() * 3);
+        const chests = document.querySelectorAll('.chest');
+
+        chests.forEach((chest, idx) => {
+            const resultText = chest.querySelector('.chest-result');
+            if (idx !== selectedChestIndex) chest.classList.add('disabled');
+
+            if (idx === winnerIndex) {
+                chest.classList.add('revealed');
+                if (idx === selectedChestIndex) {
+                    chest.classList.add('open-money');
+                    resultText.innerText = "🎉 $3000";
+                    
+                    totalAssets += 3000; 
+                    updateTotalAssetsDisplay();
+                    sendDataToBackend(`抽中大獎！目前資產 $${totalAssets}`); 
+                    setTimeout(() => showMessage("🎉 恭喜發財", "獲得大獎 <b>$3000</b>！"), 800);
+                } else {
+                    chest.classList.add('open-money');
+                    resultText.innerText = "$3000";
+                }
+            } else {
+                const smallPrize = Math.random() > 0.5 ? 800 : 0;
+                if (idx === selectedChestIndex) {
+                    if (smallPrize > 0) {
+                        chest.classList.add('open-money');
+                        resultText.innerText = `😮 $${smallPrize}`;
+                        
+                        totalAssets += smallPrize;
+                        updateTotalAssetsDisplay();
+                        sendDataToBackend(`抽中小獎！目前資產 $${totalAssets}`);
+                        setTimeout(() => showMessage("😮 還不錯", `獲得小獎 <b>$${smallPrize}</b>`), 800);
+                    } else {
+                        chest.classList.add('open-empty');
+                        resultText.innerText = "💨 銘謝惠顧";
+                        
+                        sendDataToBackend(`抽獎落空。目前資產 $${totalAssets}`);
+                        setTimeout(() => showMessage("💨 哎呀...", "裡面什麼都沒有..."), 800);
+                    }
+                } else {
+                    resultText.innerText = smallPrize > 0 ? `$${smallPrize}` : "銘謝惠顧";
+                    chest.classList.add(smallPrize > 0 ? 'open-money' : 'open-empty');
+                    chest.classList.add('revealed'); 
+                }
+            }
+        });
+
+        setTimeout(() => { document.getElementById('replay-btn').classList.remove('hidden'); }, 1500);
+    }
+</script>
+</body>
+</html>答題日誌還是空的
